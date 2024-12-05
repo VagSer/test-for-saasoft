@@ -11,7 +11,7 @@ const appStore = useAppStore()
     <h2>Таблица с данными пользователей</h2>
     <Button
       icon="pi pi-user-plus"
-      @click="() => appStore.addAccountData()"
+      @click="appStore.addAccountData"
     />
   </header>
   <Message severity="info">

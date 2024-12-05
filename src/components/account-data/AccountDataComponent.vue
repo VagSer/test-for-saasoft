@@ -11,6 +11,10 @@ const props = defineProps<{
   accountData: AccountData
 }>()
 
+const passwordMaxLength = 100
+const loginMaxLength = 100
+const markMaxLength = 100
+
 const accountTypeSelectPickerOptions = ref(["local", "LDAP"])
 const formAccountData = reactive<AccountData>(props.accountData)
 
@@ -22,7 +26,7 @@ const calculateHaveToShowPasswordInput = () => {
 }
 
 const calculateUpdatedMark = () => {
-  const separatedMarkInputValue = formAccountDataMarkInputValue.value.split("; ")
+    const separatedMarkInputValue = formAccountDataMarkInputValue.value.split("; ")
   const updatedMark: AccountMark[] = []
   separatedMarkInputValue.forEach((mark) => {
     const text = mark.replace(/\s+/g,' ').trim();
@@ -35,6 +39,11 @@ const calculateUpdatedMark = () => {
 }
 
 const updateAndSaveAccountDataFromComponent = () => {
+  if (
+    (formAccountData.accountType === "local" && formAccountData.password?.length === 0) ||
+    formAccountData.login.length === 0
+  ) return
+
   const { id, login, password } = formAccountData
   const updatedMark = calculateUpdatedMark()
 
@@ -50,6 +59,7 @@ const updateAndSaveAccountDataFromComponent = () => {
       }
     })
 
+    appStore.saveAccountDataByAccountId()
     return
   }
 
@@ -75,6 +85,11 @@ const calculateInitFormAccountDataMarkInputValue = () => {
   return initValue
 }
 
+const deleteAndSaveAccountDataFromComponent = () => {
+  appStore.deleteAccountData(formAccountData.id)
+  appStore.saveAccountDataByAccountId()
+}
+
 const formAccountDataMarkInputValue = ref(calculateInitFormAccountDataMarkInputValue())
 </script>
 
@@ -84,7 +99,8 @@ const formAccountDataMarkInputValue = ref(calculateInitFormAccountDataMarkInputV
       <InputText
         type="text"
         inputmode="text"
-        autocomplete="new-password" 
+        autocomplete="new-password"
+        :maxlength="markMaxLength"
         v-model="formAccountDataMarkInputValue"
         @blur="updateAndSaveAccountDataFromComponent"
       />
@@ -103,6 +119,9 @@ const formAccountDataMarkInputValue = ref(calculateInitFormAccountDataMarkInputV
         inputmode="text"
         autocomplete="new-password"
         v-model="formAccountData.login"
+        :invalid="!formAccountData.login"
+        :maxlength="loginMaxLength"
+        :required="true"
         @blur="updateAndSaveAccountDataFromComponent"
       />
     </td>
@@ -111,6 +130,9 @@ const formAccountDataMarkInputValue = ref(calculateInitFormAccountDataMarkInputV
         inputmode="text"
         autocomplete="new-password" 
         v-model="formAccountData.password" :feedback="false"
+        :invalid="!formAccountData.password"
+        :required="true"
+        :maxlength="passwordMaxLength"
         toggleMask
         @blur="updateAndSaveAccountDataFromComponent"
       />
@@ -120,7 +142,7 @@ const formAccountDataMarkInputValue = ref(calculateInitFormAccountDataMarkInputV
         icon="pi pi-times"
         severity="danger"
         aria-label="Delete accountData"
-        @click="appStore.deleteAccountData(formAccountData.id)"
+        @click="deleteAndSaveAccountDataFromComponent"
       />
     </td>
   </tr>

@@ -1,45 +1,22 @@
-import { defineStore } from "pinia";
-import { AccountData } from "../entities/AccountData";
-import { ref } from "vue";
+import { defineStore } from "pinia"
+import { AccountData } from "../entities/AccountData"
+import { ref } from "vue"
 
 const useAppStore = defineStore("appStore", () => {
   const accountDataByAccountId = ref(new Map<number, AccountData>())
 
-  accountDataByAccountId.value.set(1, {
-    id: 1,
-    mark: [
-      { text: "YYY" },
-      { text: "XXX" },
-      { text: "YYY" },
-    ],
-    accountType: "LDAP",
-    login: "Sergei",
-    password: null
-  })
-
-  accountDataByAccountId.value.set(2, {
-    id: 2,
-    mark: [],
-    accountType: "local",
-    login: "User",
-    password: "Password"
-  })
-
   const saveAccountDataByAccountId = () => {
     localStorage.setItem("accountDataByAccountId", JSON.stringify(Array.from(accountDataByAccountId.value.entries())))
-    console.log("saved")
   }
 
   const restoreAccountDataByAccountId = () => {
     const savedAccountDataByAccountId = localStorage.getItem("accountDataByAccountId")
     if (savedAccountDataByAccountId === null) return
 
-    accountDataByAccountId.value = new Map(JSON.parse(savedAccountDataByAccountId))
-    console.log("restored")
+    accountDataByAccountId.value = new Map<number, AccountData>(JSON.parse(savedAccountDataByAccountId))
   }
 
   restoreAccountDataByAccountId()
-
 
   const addAccountData = () => {
     const updatedAccountDataById = new Map<number, AccountData>(accountDataByAccountId.value)
