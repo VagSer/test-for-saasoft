@@ -34,7 +34,7 @@ const calculateUpdatedMark = () => {
   return updatedMark
 }
 
-const updateAccountDataFromComponent = () => {
+const updateAndSaveAccountDataFromComponent = () => {
   const { id, login, password } = formAccountData
   const updatedMark = calculateUpdatedMark()
 
@@ -63,6 +63,8 @@ const updateAccountDataFromComponent = () => {
       password
     }
   })
+
+  appStore.saveAccountDataByAccountId()
 }
 
 const calculateInitFormAccountDataMarkInputValue = () => {
@@ -84,7 +86,7 @@ const formAccountDataMarkInputValue = ref(calculateInitFormAccountDataMarkInputV
         inputmode="text"
         autocomplete="new-password" 
         v-model="formAccountDataMarkInputValue"
-        @blur="updateAccountDataFromComponent"
+        @blur="updateAndSaveAccountDataFromComponent"
       />
     </td>
     <td>
@@ -92,7 +94,7 @@ const formAccountDataMarkInputValue = ref(calculateInitFormAccountDataMarkInputV
         v-model="formAccountData.accountType" 
         :options="accountTypeSelectPickerOptions"
         style="width: 100%;"
-        @change="updateAccountDataFromComponent"
+        @change="updateAndSaveAccountDataFromComponent"
       />
     </td>
     <td :colspan="calculateLoginColspan()">
@@ -101,7 +103,7 @@ const formAccountDataMarkInputValue = ref(calculateInitFormAccountDataMarkInputV
         inputmode="text"
         autocomplete="new-password"
         v-model="formAccountData.login"
-        @blur="updateAccountDataFromComponent"
+        @blur="updateAndSaveAccountDataFromComponent"
       />
     </td>
     <td v-if="calculateHaveToShowPasswordInput()">
@@ -110,7 +112,7 @@ const formAccountDataMarkInputValue = ref(calculateInitFormAccountDataMarkInputV
         autocomplete="new-password" 
         v-model="formAccountData.password" :feedback="false"
         toggleMask
-        @blur="updateAccountDataFromComponent"
+        @blur="updateAndSaveAccountDataFromComponent"
       />
     </td>
     <td>

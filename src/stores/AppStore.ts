@@ -25,6 +25,22 @@ const useAppStore = defineStore("appStore", () => {
     password: "Password"
   })
 
+  const saveAccountDataByAccountId = () => {
+    localStorage.setItem("accountDataByAccountId", JSON.stringify(Array.from(accountDataByAccountId.value.entries())))
+    console.log("saved")
+  }
+
+  const restoreAccountDataByAccountId = () => {
+    const savedAccountDataByAccountId = localStorage.getItem("accountDataByAccountId")
+    if (savedAccountDataByAccountId === null) return
+
+    accountDataByAccountId.value = new Map(JSON.parse(savedAccountDataByAccountId))
+    console.log("restored")
+  }
+
+  restoreAccountDataByAccountId()
+
+
   const addAccountData = () => {
     const updatedAccountDataById = new Map<number, AccountData>(accountDataByAccountId.value)
     updatedAccountDataById.set(Date.now(), {
@@ -59,7 +75,8 @@ const useAppStore = defineStore("appStore", () => {
     accountDataByAccountId,
     addAccountData,
     deleteAccountData,
-    updateAccountData
+    updateAccountData,
+    saveAccountDataByAccountId
   }
 })
 
